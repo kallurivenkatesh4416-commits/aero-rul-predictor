@@ -1,0 +1,12 @@
+numpy
+pandas
+scikit-learn
+matplotlib
+jupyterlab
+notebook
+joblib
+fastapi
+uvicorn[standard]
+pydantic
+optuna
+python-dotenv
