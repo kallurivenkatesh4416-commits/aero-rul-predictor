@@ -17,6 +17,8 @@ Data loading utilities for the NASA C-MAPSS dataset.
 ...
 """
 
+
+
 def get_cmapss_column_names() -> list[str]:
     """
     Return standard column names for the NASA C-MAPSS dataset.
@@ -133,6 +135,39 @@ def load_test_rul() -> pd.DataFrame:
     rul_data['unit_number'] = range(1, len(rul_data) + 1)
     
     return rul_data[['unit_number', 'true_rul']]
+
+
+def add_rul_target(data: pd.DataFrame, max_rul: int = MAX_RUL) -> pd.DataFrame:
+    """
+    Add Remaining Useful Life target to the training data.
+
+    For each engine:
+        RUL = final cycle of that engine - current cycle
+
+    Args:
+        data (pd.DataFrame): Training data.
+        max_rul (int): Maximum RUL value after capping.
+
+    Returns:
+        pd.DataFrame: Training data with a new 'rul' column.
+    """
+    required_columns = {'unit_number', 'time_in_cycles'}
+    
+    if not required_columns.issubset(data.columns):
+        raise ValueError(
+            "Input data must contain 'unit_number' and 'time_in_cycles' columns."
+        )
+        
+    data_with_rul = data.copy()
+    
+    max_cycle_per_unit = data_with_rul.groupby('unit_number')[
+        'time_in_cycles'
+    ].transform('max')
+    
+    data_with_rul['rul'] = max_cycle_per_unit - data_with_rul['time_in_cycles']
+    data_with_rul['rul'] = data_with_rul['rul'].clip(upper = max_rul)
+    
+    return data_with_rul
 
 
 
