@@ -36,7 +36,7 @@ TEST_FILE_PATH = CMAPSS_DATA_DIR / TEST_FILE_NAME
 RUL_FILE_PATH = CMAPSS_DATA_DIR / RUL_FILE_NAME
 
 # Saved model path
-MODEL_PATH = MODEL_DIR / "rul_prediction_model.joblib"
+MODEL_PATH = MODEL_DIR / "xgboost_rul_model.joblib"
 
 # Random seed for reproducibility
 RANDOM_STATE = 42
@@ -45,3 +45,19 @@ RANDOM_STATE = 42
 # In predictive maintenance, very high RUL values are usually capped
 # to make the target more stable for model training.
 MAX_RUL = 125
+
+# Final tuned XGBoost hyperparameters
+# These were selected from the experimentation notebook using
+# GroupKFold cross-validation to avoid engine-level data leakage.
+XGBOOST_PARAMS = {
+    "objective": "reg:squarederror",
+    "n_estimators": 700,
+    "learning_rate": 0.01,
+    "max_depth": 6,
+    "min_child_weight": 5,
+    "subsample": 0.8,
+    "colsample_bytree": 0.8,
+    "reg_lambda": 5,
+    "random_state": RANDOM_STATE,
+    "n_jobs": -1,
+}
