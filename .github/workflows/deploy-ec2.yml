@@ -1,0 +1,53 @@
+name: Deploy to EC2
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/ec2_key.pem
+          chmod 600 ~/.ssh/ec2_key.pem
+          ssh-keyscan -H "${{ secrets.EC2_HOST }}" >> ~/.ssh/known_hosts
+
+      - name: Deploy application on EC2
+        run: |
+          ssh -i ~/.ssh/ec2_key.pem ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+            set -e
+
+            echo "Moving into project directory..."
+            cd /home/ubuntu/aero-rul-predictor
+
+            echo "Pulling latest code from GitHub..."
+            git fetch origin main
+            git reset --hard origin/main
+
+            echo "Checking model artifact..."
+            test -f models/xgboost_rul_model.joblib
+
+            echo "Stopping old container if running..."
+            sudo docker stop aero-rul-api-container || true
+            sudo docker rm aero-rul-api-container || true
+
+            echo "Building new Docker image..."
+            sudo docker build -t aero-rul-api .
+
+            echo "Starting new container..."
+            sudo docker run -d --name aero-rul-api-container -p 8000:8000 aero-rul-api
+
+            echo "Waiting for API startup..."
+            sleep 5
+
+            echo "Checking API health..."
+            curl -f http://localhost:8000/
+
+            echo "Deployment completed successfully."
+          EOF
