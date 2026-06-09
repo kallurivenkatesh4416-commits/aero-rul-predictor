@@ -11,3 +11,4 @@ uvicorn[standard]
 pydantic
 python-dotenv
 optuna
+pytest
