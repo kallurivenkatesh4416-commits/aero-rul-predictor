@@ -7,11 +7,19 @@ Users can send engine sensor readings and receive:
 2. Risk category
 """
 
+from pathlib import Path
+
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import RedirectResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 import pandas as pd
 
 from src.inference import predict_rul
+
+
+# Directory holding the interactive web console (served as static files).
+WEB_DIR = Path(__file__).resolve().parents[1] / "web"
 
 
 app = FastAPI(
@@ -70,8 +78,14 @@ def health_check() -> dict[str,str]:
     return {
         'status': 'ok',
         'message': "Aircraft engine RUL prediction API is running",
-    
+        'web_console': '/app',
     }
+
+
+@app.get("/console", include_in_schema=False)
+def open_console() -> RedirectResponse:
+    """Convenience redirect to the interactive web console."""
+    return RedirectResponse(url="/app/")
     
     
 @app.post('/predict', response_model = PredictionResponse)
@@ -107,3 +121,13 @@ def predict_engine_rul(engine_data: EngineSensorInput) -> PredictionResponse:
             status_code = 400,
             detail = f'Prediction failed: {str(error)}',
         ) from error
+
+
+# Serve the interactive web console at /app (index.html + assets).
+# Mounted last so it never shadows the API routes defined above.
+if WEB_DIR.exists():
+    app.mount(
+        "/app",
+        StaticFiles(directory=str(WEB_DIR), html=True),
+        name="web",
+    )
