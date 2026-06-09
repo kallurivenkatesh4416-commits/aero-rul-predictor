@@ -147,11 +147,11 @@ Local machine
 → /home/ubuntu/aero-rul-predictor/models/xgboost_rul_model.joblib
 ```
 
-In a more advanced production setup, the model artifact can be stored in Amazon S3, GitHub Releases, Amazon ECR image layers, or a dedicated model registry.
+In a more advanced production setup, the model artifact can be stored in Amazon S3, GitHub Releases, Amazon ECR image layers or a dedicated model registry.
 
 ## Future CI/CD Improvement
 
-The current deployment was performed manually to understand the full infrastructure flow.
+The current deployment was performed manually to understand full infrastructure flow.
 
 A future improvement is to add GitHub Actions for CI/CD.
 
