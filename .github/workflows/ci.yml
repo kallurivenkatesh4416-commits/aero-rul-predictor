@@ -38,3 +38,7 @@ jobs:
       - name: Verify web console exists
         run: |
           test -f web/index.html
+
+      - name: Run tests
+        run: |
+          pytest
