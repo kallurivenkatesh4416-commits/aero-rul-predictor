@@ -1,5 +1,7 @@
 # Aero RUL Predictor
 
+[![CI](https://github.com/kallurivenkatesh4416-commits/aero-rul-predictor/actions/workflows/ci.yml/badge.svg)](https://github.com/kallurivenkatesh4416-commits/aero-rul-predictor/actions/workflows/ci.yml)
+
 Production-style machine learning project for predicting the Remaining Useful Life
 (RUL) of aircraft turbofan engines from NASA C-MAPSS sensor data.
 
