@@ -236,6 +236,38 @@ http://localhost:8000/docs
 Note: the Docker image copies the `models/` directory. Train the model first if
 `models/xgboost_rul_model.joblib` is missing.
 
+## Testing and CI
+
+This project includes a basic automated testing setup using `pytest`.
+
+The current tests verify:
+
+```text
+GET / health endpoint returns a successful response
+GET /console redirects to the web console
+web/index.html exists for the interactive frontend
+```
+
+The tests can be run locally using:
+
+```bash
+pytest
+```
+
+GitHub Actions is configured to run automatically on every push and pull request to the `main` branch.
+
+The CI pipeline checks:
+
+```text
+Dependency installation
+Python syntax compilation
+FastAPI app import
+Web console file availability
+pytest test execution
+```
+
+A passing CI badge is shown at the top of this README.
+
 ## Model Inputs
 
 The trained model expects these 17 features:
