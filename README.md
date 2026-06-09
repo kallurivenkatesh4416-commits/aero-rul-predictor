@@ -236,6 +236,35 @@ http://localhost:8000/docs
 Note: the Docker image copies the `models/` directory. Train the model first if
 `models/xgboost_rul_model.joblib` is missing.
 
+## Live Demo / Deployment Note
+
+This project was successfully deployed on an AWS EC2 instance using Docker.
+
+The deployed application includes:
+
+```text
+FastAPI backend
+Interactive web console at /app
+Prediction endpoint at /predict
+Dockerized XGBoost inference service
+```
+
+During deployment testing, the API was verified through the browser-based Swagger documentation and the `/predict` endpoint returned a valid Remaining Useful Life prediction.
+
+The EC2 instance may be kept stopped when not in use to control cloud costs. Therefore, the live public IP endpoint may not always be active.
+
+When the EC2 instance is running, the application can be accessed at:
+
+```text
+http://<EC2_PUBLIC_IP>:8000/app
+```
+
+The API documentation can be accessed at:
+
+```text
+http://<EC2_PUBLIC_IP>:8000/docs
+```
+
 ## Testing and CI
 
 This project includes a basic automated testing setup using `pytest`.
